@@ -4,7 +4,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "pm2 startOrRestart ecosystem.config.js --env dev"
+    "start": "pm2 startOrRestart ecosystem.config.js --env production",
+    "dev": "pm2 startOrRestart ecosystem.config.js --env development",
+    "stop": "pm2 stop ecosystem.config.js",
+    "postinstall": "pm2 install typescript"
   },
   "dependencies": {
     "@discordjs/builders": "^0.6.0",
