@@ -61,3 +61,13 @@ npm run stop
 # Or
 yarn stop
 ```
+
+## 📗 Contributing
+
+Please feel free to fork this bot and make it your own!
+
+## License
+
+This bot is licensed under the [GNU General Public License v3.0.](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+You may copy, distribute and modify the software under to the conditions of the GNU General Public License version 3.0.
