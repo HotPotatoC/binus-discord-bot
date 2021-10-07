@@ -20,7 +20,7 @@ const commandFiles = fs
 export const commands = new Collection<string, Command>()
 
 /** Get all commands in the commands directory */
-export async function storeCommandsToCollection() {
+export function storeCommandsToCollection() {
   for (const file of commandFiles) {
     const command = require(path.resolve(commandsDirPath, file))
       .default as Command
@@ -31,7 +31,7 @@ export async function storeCommandsToCollection() {
 }
 
 /** Create slash commands */
-export async function createSlashCommands() {
+export function createSlashCommands() {
   const slashCommands: SlashCommandBuilder[] = []
   for (const file of commandFiles) {
     const command = require(path.resolve(commandsDirPath, file))
@@ -114,8 +114,8 @@ export async function createSlashCommands() {
 
 /** Register commands */
 export async function registerCommands(client: REST) {
-  await storeCommandsToCollection()
-  const commands = await createSlashCommands()
+  storeCommandsToCollection()
+  const commands = createSlashCommands()
   await client
     .put(Routes.applicationGuildCommands(bot.clientID, bot.guildID), {
       body: commands.map((c) => c.toJSON()),
