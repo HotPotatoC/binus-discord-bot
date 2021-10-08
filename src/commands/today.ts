@@ -1,4 +1,5 @@
 import { MessageEmbed } from 'discord.js'
+import dayjs from 'dayjs'
 import type { HexColorString } from 'discord.js'
 
 import theme from '../theme'
@@ -21,21 +22,16 @@ export async function todayExecute({ interaction, mongodb }: CommandContext) {
     const scheduleEmbeds: MessageEmbed[] = []
 
     for (const schedule of data.values()) {
+      const startsAt = dayjs(schedule.dateStart).format('YYYY-MM-DD HH:mm')
+      const endsAt = dayjs(schedule.dateEnd).format('YYYY-MM-DD HH:mm')
+
       const embed = new MessageEmbed()
         .setTitle(`${schedule.content} [${schedule.title}]`)
         .setDescription(
           `Session ${schedule.customParam.sessionNumber} ${schedule.content} ${schedule.title}`
         )
-        .addField(
-          'Starting at:',
-          new Date(schedule.dateStart).toLocaleTimeString(),
-          true
-        )
-        .addField(
-          'Ends at:',
-          new Date(schedule.dateEnd).toLocaleTimeString(),
-          true
-        )
+        .addField('Starts at:', startsAt, true)
+        .addField('Ends at:', endsAt, true)
         .addField(
           'Session:',
           schedule.customParam.sessionNumber.toString(),
@@ -50,7 +46,7 @@ export async function todayExecute({ interaction, mongodb }: CommandContext) {
     await interaction.reply({ embeds: scheduleEmbeds })
   } catch (error) {
     console.log(error)
-    return interaction.reply({
+    await interaction.reply({
       content: 'There was an error while executing this command!',
       ephemeral: true,
     })
