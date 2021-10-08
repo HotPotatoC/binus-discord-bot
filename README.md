@@ -1,5 +1,7 @@
 # Binus discord bot
 
+![Logo](./.github/assets/logo.png)
+
 > **🛑 DISCLAIMER: This bot is not affiliated with or endorsed by Binus University. The purpose of this bot is to assist the students of Binus University to get information about classes.**
 
 ## 🌟 Features
