@@ -1,13 +1,26 @@
-import { CommandInteraction, MessageEmbed } from 'discord.js'
-import { fetchTodaysSchedule } from '../services/schedule-api'
-import type { Command } from '../types'
+import { MessageEmbed } from 'discord.js'
+import type { HexColorString } from 'discord.js'
 
-export async function todayExecute(interaction: CommandInteraction) {
+import theme from '../theme'
+import createScheduleDomain from '../domain/schedule-domain'
+import createScheduleService from '../services/schedule'
+import type { Command, CommandContext } from '../types'
+
+export async function todayExecute({ interaction, mongodb }: CommandContext) {
   try {
-    const data = await fetchTodaysSchedule()
+    const scheduleDomain = createScheduleDomain({
+      database: mongodb.database,
+      client: mongodb.client,
+    })
+
+    const scheduleService = createScheduleService({
+      domain: scheduleDomain,
+    })
+
+    const data = await scheduleService.fetchTodaysSchedules()
     const scheduleEmbeds: MessageEmbed[] = []
 
-    for (const schedule of data.Schedule.values()) {
+    for (const schedule of data.values()) {
       const embed = new MessageEmbed()
         .setTitle(`${schedule.content} [${schedule.title}]`)
         .setDescription(
@@ -29,7 +42,7 @@ export async function todayExecute(interaction: CommandInteraction) {
           true
         )
         .addField('Delivery Mode:', schedule.deliveryMode, true)
-        .setColor('#FFF')
+        .setColor(theme.colors.primary as HexColorString)
 
       scheduleEmbeds.push(embed)
     }

@@ -1,7 +1,6 @@
-import { CommandInteraction } from 'discord.js'
-import type { Command } from './../types'
+import type { Command, CommandContext } from './../types'
 
-export async function pingExecute(interaction: CommandInteraction) {
+export async function pingExecute({ interaction }: CommandContext) {
   await interaction.reply('Pong!')
 }
 

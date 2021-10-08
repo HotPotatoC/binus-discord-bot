@@ -1,6 +1,10 @@
-import { CommandInteraction, MessageEmbed } from 'discord.js'
-import { fetchSchedule } from '../services/schedule-api'
-import type { Command, CommandOption } from '../types'
+import { MessageEmbed } from 'discord.js'
+import type { HexColorString } from 'discord.js'
+
+import theme from '../theme'
+import createScheduleDomain from '../domain/schedule-domain'
+import createScheduleService from '../services/schedule'
+import type { Command, CommandContext, CommandOption } from '../types'
 
 const scheduleCommandOptions: CommandOption[] = [
   {
@@ -23,14 +27,26 @@ const scheduleCommandOptions: CommandOption[] = [
   },
 ]
 
-export async function scheduleExecute(interaction: CommandInteraction) {
+export async function scheduleExecute({
+  interaction,
+  mongodb,
+}: CommandContext) {
   try {
+    const scheduleDomain = createScheduleDomain({
+      database: mongodb.database,
+      client: mongodb.client,
+    })
+
+    const scheduleService = createScheduleService({
+      domain: scheduleDomain,
+    })
+
     const year = interaction.options.getString('year')
     const month = interaction.options.getString('month')
     const day = interaction.options.getString('day')
     const date = `${year}-${month}-${day}`
 
-    const data = await fetchSchedule(date)
+    const data = await scheduleService.fetchSchedule(date)
 
     if (!data) {
       await interaction.reply({
@@ -42,7 +58,7 @@ export async function scheduleExecute(interaction: CommandInteraction) {
 
     const scheduleEmbeds: MessageEmbed[] = []
 
-    for (const schedule of data.Schedule.values()) {
+    for (const schedule of data.values()) {
       const embed = new MessageEmbed()
         .setTitle(`${schedule.content} [${schedule.title}]`)
         .setDescription(
@@ -64,7 +80,7 @@ export async function scheduleExecute(interaction: CommandInteraction) {
           true
         )
         .addField('Delivery Mode:', schedule.deliveryMode, true)
-        .setColor('#FFF')
+        .setColor(theme.colors.primary as HexColorString)
 
       scheduleEmbeds.push(embed)
     }

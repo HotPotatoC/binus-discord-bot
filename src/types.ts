@@ -1,6 +1,27 @@
-import type { CommandInteraction } from 'discord.js'
+import * as mongodb from 'mongodb'
+import type { Client, CommandInteraction } from 'discord.js'
+
 import { binus } from './config'
 
+export type DomainContext = {
+  database: mongodb.Db
+  client: mongodb.MongoClient
+}
+
+export type ServiceContext<D> = {
+  domain: D
+}
+
+export type CommandContext = {
+  interaction: CommandInteraction
+  client: Client
+  mongodb: {
+    database: mongodb.Db
+    client: mongodb.MongoClient
+  }
+}
+
+/** Command option */
 export type CommandOption = {
   name: string
   description: string
@@ -23,13 +44,13 @@ export type Command = {
   /** Description of the command */
   description: string
   /** Logic of the command */
-  execute: (interaction: CommandInteraction) => Promise<void>
+  execute: (ctx: CommandContext) => Promise<void>
   /** Options of the command (slash commands only) */
   options?: CommandOption[]
 }
 
-/** Schedule API schema */
-export type Schedule = {
+/** Schedule schema */
+export type ScheduleAPISchema = {
   dateStart: string
   dateEnd: string
   title: string
@@ -53,7 +74,7 @@ export type Schedule = {
 /** Schedule REST API response schema */
 export type ScheduleResponse = {
   dateStart: string
-  Schedule: Schedule[]
+  Schedule: ScheduleAPISchema[]
 }
 
 /** Route: https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule (used as prefix) */

@@ -117,7 +117,7 @@ export async function registerCommands(client: REST) {
   storeCommandsToCollection()
   const commands = createSlashCommands()
   await client
-    .put(Routes.applicationGuildCommands(bot.clientID, bot.guildID), {
+    .put(Routes.applicationCommands(bot.clientID), {
       body: commands.map((c) => c.toJSON()),
     })
     .catch(console.error)

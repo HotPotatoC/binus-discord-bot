@@ -6,6 +6,10 @@ export const bot = {
   guildID: process.env.GUILD_ID as string,
   clientID: process.env.CLIENT_ID as string,
   prefix: process.env.PREFIX as string,
+  notificationChannelID: '',
+  setNotificationChannelID: (id: string) => {
+    bot.notificationChannelID = id
+  },
 }
 
 /** Auth configurations */

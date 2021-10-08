@@ -1,11 +1,17 @@
-import { Client, Intents } from 'discord.js'
+import { Client, Intents, TextChannel } from 'discord.js'
 import { REST } from '@discordjs/rest'
 
 import { bot } from './config'
+import database from './infrastructure/database'
 import { commands, registerCommands } from './register-commands'
+import { ConfigureCommandComponentID } from './commands/configure'
 
 /** Entry-point */
 async function main() {
+  const [mongoDatabase, mongoClient] = await database.connect(
+    process.env.MONGODB_URL as string
+  )
+
   const client = new Client({
     intents: [Intents.FLAGS.GUILDS],
   })
@@ -14,11 +20,26 @@ async function main() {
 
   await registerCommands(rest)
 
-  client.on('ready', () => {
-    console.log('Ready!')
+  client.on('ready', async (client) => {
+    console.log(`Logged in as ${client.user.tag}!`)
+
+    console.log(`Connected to ${client.guilds.cache.size} guilds!`)
   })
 
   client.on('interactionCreate', async (interaction) => {
+    if (interaction.isSelectMenu()) {
+      if (
+        interaction.customId ===
+        ConfigureCommandComponentID.notificationsChannelID
+      ) {
+        // TODO: Implement notifications
+        await interaction.update({
+          content: 'Notification is still in WIP',
+          components: [],
+        })
+      }
+    }
+
     if (!interaction.isCommand()) return
     try {
       const command = commands.get(interaction.commandName)
@@ -28,9 +49,16 @@ async function main() {
         return
       }
 
-      await command.execute(interaction)
+      await command.execute({
+        interaction,
+        client,
+        mongodb: {
+          database: mongoDatabase,
+          client: mongoClient,
+        },
+      })
     } catch (error) {
-      return interaction.reply({
+      await interaction.reply({
         content: 'There was an error while executing this command!',
         ephemeral: true,
       })
