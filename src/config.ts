@@ -3,7 +3,6 @@ import 'dotenv/config'
 /** Bot configurations */
 export const bot = {
   token: process.env.TOKEN as string,
-  guildID: process.env.GUILD_ID as string,
   clientID: process.env.CLIENT_ID as string,
   prefix: process.env.PREFIX as string,
   notificationChannelID: '',
