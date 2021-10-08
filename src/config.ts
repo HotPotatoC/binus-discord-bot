@@ -20,7 +20,8 @@ export const auth = {
 export const binus = {
   restScheduleURL: 'https://func-bm7-schedule-prod.azurewebsites.net/api',
   restCourseURL: 'https://apim-bm7-prod.azure-api.net/func-bm7-course-prod',
-  binusMayaURL: 'https://newbinusmaya.binus.ac.id',
+  newBinusMayaURL: 'https://newbinusmaya.binus.ac.id',
+  oldBinusMayaURL: 'https://binusmaya.binus.ac.id',
 }
 
 export default { bot, auth, binus }

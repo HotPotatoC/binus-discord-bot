@@ -3,8 +3,8 @@ import { auth, binus } from '../config'
 
 export const instance = axios.create({
   headers: {
-    Origin: binus.binusMayaURL,
-    Referer: binus.binusMayaURL,
+    Origin: binus.newBinusMayaURL,
+    Referer: binus.newBinusMayaURL,
     roleName: 'Student',
     Authorization: `Bearer ${auth.bearerToken}`,
     academicCareer: 'RS1',
