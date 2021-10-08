@@ -3,15 +3,18 @@ import type { Client, CommandInteraction } from 'discord.js'
 
 import { binus } from './config'
 
+/** Domain dependencies */
 export type DomainContext = {
   database: mongodb.Db
   client: mongodb.MongoClient
 }
 
+/** Service dependencies */
 export type ServiceContext<D> = {
   domain: D
 }
 
+/** Command dependencies */
 export type CommandContext = {
   interaction: CommandInteraction
   client: Client
