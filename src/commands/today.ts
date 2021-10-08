@@ -38,7 +38,7 @@ export async function todayExecute({ interaction, mongodb }: CommandContext) {
           true
         )
         .addField('Delivery Mode:', schedule.deliveryMode, true)
-        .setColor(theme.colors.primary as HexColorString)
+        .setColor(theme.colors.primary)
 
       scheduleEmbeds.push(embed)
     }

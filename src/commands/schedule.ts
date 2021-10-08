@@ -76,7 +76,7 @@ export async function scheduleExecute({
           true
         )
         .addField('Delivery Mode:', schedule.deliveryMode, true)
-        .setColor(theme.colors.primary as HexColorString)
+        .setColor(theme.colors.primary)
 
       scheduleEmbeds.push(embed)
     }
