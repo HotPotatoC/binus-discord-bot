@@ -1,4 +1,7 @@
-import type { Message } from 'discord.js'
+import { MessageEmbed } from 'discord.js'
+import type { HexColorString, Message } from 'discord.js'
+
+import theme from '../theme'
 import type { Command, CommandContext } from './../types'
 
 export async function pingExecute({ interaction }: CommandContext) {
@@ -7,11 +10,23 @@ export async function pingExecute({ interaction }: CommandContext) {
     fetchReply: true,
   })) as Message
 
-  await interaction.editReply(
-    `Roundtrip latency: ${
-      sent.createdTimestamp - interaction.createdTimestamp
-    }ms`
-  )
+  const [slow, medium, fast] = ['🔴', '🟡', '🟢']
+  const latency = sent.createdTimestamp - interaction.createdTimestamp
+  let description = `${slow} \`${latency}ms\``
+
+  if (latency > 100 && latency < 500) {
+    description = `${medium} \`${latency}ms\``
+  }
+
+  if (latency < 100) {
+    description = `${fast} \`${latency}ms\``
+  }
+
+  const embed = new MessageEmbed()
+    .setDescription(description)
+    .setColor(theme.colors.primary as HexColorString)
+
+  await interaction.editReply({ embeds: [embed] })
 }
 
 export default {
