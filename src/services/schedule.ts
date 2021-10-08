@@ -3,7 +3,8 @@ import { nanoid } from 'nanoid'
 import dayjs from 'dayjs'
 
 import { routeClassSession, routeScheduleDate } from '../types'
-import request from '../infrastructure/request'
+import request from '../infrastructure/http-client'
+
 import type { ClassSession, ServiceContext, ScheduleResponse } from '../types'
 import type {
   ScheduleDomain,

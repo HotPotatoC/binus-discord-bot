@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { auth, binus } from '../config'
 
-export const instance = axios.create({
+export const request = axios.create({
   headers: {
     Origin: binus.newBinusMayaURL,
     Referer: binus.newBinusMayaURL,
@@ -17,4 +17,4 @@ export const instance = axios.create({
   },
 })
 
-export default instance
+export default request
