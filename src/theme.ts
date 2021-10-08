@@ -1,8 +1,10 @@
 import type { ColorResolvable } from 'discord.js'
 
+export type ThemeColors = 'primary' | 'warning' | 'danger' | 'success'
+
 export type Theme = {
   colors: {
-    [key: string]: ColorResolvable
+    [key in ThemeColors]: ColorResolvable
   }
 }
 
