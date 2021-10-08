@@ -2,7 +2,7 @@
 
 > To get your bearer token, make sure you have logged in to [newbinusmaya.binus.ac.id](newbinusmaya.binus.ac.id).
 
-> 🛑 Warning do not share your bearer token with anyone else 🛑
+> **🛑 Warning do not share your bearer token with anyone else 🛑**
 
 - Open the developer tools (F12) and go to Network tab.
 
@@ -25,3 +25,5 @@ BINUS_BEARER_TOKEN=eyJhbGciOiJQUz....
 ```
 
 That's it!
+
+> **🛑 Warning do not share your bearer token with anyone else 🛑**
