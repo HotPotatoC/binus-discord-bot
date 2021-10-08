@@ -46,6 +46,8 @@ PREFIX=b!
 BINUS_BEARER_TOKEN=secret
 ```
 
+> For more information about the `BINUS_BEARER_TOKEN` read [here](BEARER_TOKEN.md)
+
 ## 🔌 Running the bot
 
 Once you've installed the dependencies and configured the bot, you can run the bot by running the following command:
