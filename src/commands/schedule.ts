@@ -47,9 +47,9 @@ export async function scheduleExecute({
     const day = interaction.options.getString('day')
     const date = `${year}-${month}-${day}`
 
-    const data = await scheduleService.fetchSchedule(date)
+    const schedule = await scheduleService.fetchSchedule(date)
 
-    if (!data) {
+    if (!schedule) {
       await interaction.reply({
         content: 'No schedule found for that date.',
         ephemeral: true,
@@ -59,24 +59,30 @@ export async function scheduleExecute({
 
     const scheduleEmbeds: MessageEmbed[] = []
 
-    for (const schedule of data.values()) {
-      const startsAt = dayjs(schedule.dateStart).format('YYYY-MM-DD HH:mm')
-      const endsAt = dayjs(schedule.dateEnd).format('YYYY-MM-DD HH:mm')
+    for (const session of schedule.schedule.values()) {
+      const startsAt = dayjs(session.dateStart).format('YYYY-MM-DD HH:mm')
+      const endsAt = dayjs(session.dateEnd).format('YYYY-MM-DD HH:mm')
 
       const embed = new MessageEmbed()
-        .setTitle(`${schedule.content} [${schedule.title}]`)
+        .setTitle(`${session.content} [${session.title}]`)
         .setDescription(
-          `Session ${schedule.customParam.sessionNumber} ${schedule.content} ${schedule.title}`
+          `Session ${session.customParam.sessionNumber} ${session.content} ${session.title}`
         )
-        .addField('Starts at:', startsAt, true)
-        .addField('Ends at:', endsAt, true)
+        .addField('Starts at:', startsAt)
+        .addField('Ends at:', endsAt)
         .addField(
           'Session:',
-          schedule.customParam.sessionNumber.toString(),
+          session.customParam.sessionNumber.toString(),
           true
         )
-        .addField('Delivery Mode:', schedule.deliveryMode, true)
+        .addField('Delivery Mode:', session.deliveryMode, true)
+        .setURL(session.zoomUrl || '')
+        .setFooter(`ID: ${schedule.uniqueId}`)
         .setColor(theme.colors.primary)
+
+      if (session.zoomUrl) {
+        embed.addField('Zoom URL:', session.zoomUrl, true)
+      }
 
       scheduleEmbeds.push(embed)
     }
@@ -84,7 +90,7 @@ export async function scheduleExecute({
     await interaction.reply({ embeds: scheduleEmbeds })
   } catch (error) {
     console.log(error)
-    return interaction.reply({
+    await interaction.reply({
       content: 'An error occurred while fetching the schedule.',
       ephemeral: true,
     })

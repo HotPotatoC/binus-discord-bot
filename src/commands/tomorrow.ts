@@ -21,27 +21,33 @@ export async function tomorrowExecute({
       domain: scheduleDomain,
     })
 
-    const schedules = await scheduleService.fetchTomorrowsSchedules()
+    const schedule = await scheduleService.fetchTomorrowsSchedules()
     const scheduleEmbeds: MessageEmbed[] = []
 
-    for (const schedule of schedules.values()) {
-      const startsAt = dayjs(schedule.dateStart).format('YYYY-MM-DD HH:mm')
-      const endsAt = dayjs(schedule.dateEnd).format('YYYY-MM-DD HH:mm')
+    for (const session of schedule.schedule.values()) {
+      const startsAt = dayjs(session.dateStart).format('YYYY-MM-DD HH:mm')
+      const endsAt = dayjs(session.dateEnd).format('YYYY-MM-DD HH:mm')
 
       const embed = new MessageEmbed()
-        .setTitle(`${schedule.content} [${schedule.title}]`)
+        .setTitle(`${session.content} [${session.title}]`)
         .setDescription(
-          `Session ${schedule.customParam.sessionNumber} ${schedule.content} ${schedule.title}`
+          `Session ${session.customParam.sessionNumber} ${session.content} ${session.title}`
         )
-        .addField('Starts at:', startsAt, true)
-        .addField('Ends at:', endsAt, true)
+        .addField('Starts at:', startsAt)
+        .addField('Ends at:', endsAt)
         .addField(
           'Session:',
-          schedule.customParam.sessionNumber.toString(),
+          session.customParam.sessionNumber.toString(),
           true
         )
-        .addField('Delivery Mode:', schedule.deliveryMode, true)
+        .addField('Delivery Mode:', session.deliveryMode, true)
+        .setURL(session.zoomUrl || '')
+        .setFooter(`ID: ${schedule.uniqueId}`)
         .setColor(theme.colors.primary)
+
+      if (session.zoomUrl) {
+        embed.addField('Zoom URL:', session.zoomUrl, true)
+      }
 
       scheduleEmbeds.push(embed)
     }

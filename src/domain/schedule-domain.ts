@@ -8,7 +8,7 @@ export type ScheduleDomain = {
   _id: ObjectId
   uniqueId: string
   dateStart: string
-  schedule: ScheduleAPISchema[]
+  schedule: (ScheduleAPISchema & { zoomUrl: string | null })[]
   createdAt: Date
 }
 

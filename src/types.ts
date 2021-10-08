@@ -103,6 +103,63 @@ export const routeCoursesTUT = `${routeCourses}/TUT/Student`
 /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/LAB/Student */
 export const routeCoursesLAB = `${routeCourses}/LAB/Student`
 
+/** Class session resource */
+export type ClassSessionResource = {
+  id: string
+  name: string
+  url: string | null
+  token: string | null
+  type: any | null
+  duration: string
+  index: string
+  isOpen: boolean
+  progressStamp: number
+  timesAccessed: number
+  resourceStatus: string
+  lastUpdatedDate: string
+  resourceLastUpdatedDate: string
+  assessmentType: any | null
+  resourceType: string
+  dueDate: string
+  thumbnail: any | null
+  isOverdue: boolean
+  iosRedirectUrl: string | null
+  androidRedirectUrl: string | null
+}
+
+/** Class session details */
+export type ClassSession = {
+  topic: string
+  status: any
+  resources: ClassSessionResource[]
+  lecturers: {
+    id: string
+    name: string
+    pictureUrl: string
+    userCode: string
+    role: string
+  }
+  totalResource: number
+  classSessionProgress: {
+    notStarted: number
+    inProgress: number
+    completed: number
+  }
+  meetingStart: string
+  meetingEnd: string
+  joinUrl: string
+  isEnded: boolean
+  sessionNumber: number
+  startDateSessionUtc: string
+  endDateSessionUtc: string
+  dateStart: string
+  dateEnd: string
+  classDeliveryMode: string
+  deliveryMode: string
+  deliveryModeDesc: string
+  courseSubTopic: string[]
+}
+
 /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/ClassSession/Class/{classID}/Student */
 export const routeClass = (classID: string) =>
   `${binus.restCourseURL}/ClassSession/Class/${classID}/Student`

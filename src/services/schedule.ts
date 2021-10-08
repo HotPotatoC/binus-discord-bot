@@ -1,10 +1,14 @@
 import { ObjectId } from 'bson'
 import { nanoid } from 'nanoid'
+import dayjs from 'dayjs'
 
-import { routeScheduleDate } from '../types'
+import { routeClassSession, routeScheduleDate } from '../types'
 import request from '../infrastructure/request'
-import type { ServiceContext, ScheduleResponse } from '../types'
-import type { ScheduleDomainContext } from '../domain/schedule-domain'
+import type { ClassSession, ServiceContext, ScheduleResponse } from '../types'
+import type {
+  ScheduleDomain,
+  ScheduleDomainContext,
+} from '../domain/schedule-domain'
 
 /** Creates a new schedule service handler */
 export function createScheduleService({
@@ -13,14 +17,18 @@ export function createScheduleService({
   /** Fetches class schedule by date (yyyy-mm-dd) */
   async function fetchSchedule(date: string) {
     // If the schedule exists in the collection, return it
-    const scheduleExists = await domain.findOne({
+    const savedSchedule = await domain.findOne({
       dateStart: {
-        $gte: new Date(date).toISOString(),
-        $lte: new Date(date + 'T23:59:59.999Z').toISOString(),
+        $gte: dayjs(date).toISOString(),
+        $lte: dayjs(date)
+          .add(23, 'hour')
+          .add(59, 'minute')
+          .add(59, 'second')
+          .toISOString(),
       },
     })
 
-    if (!scheduleExists) {
+    if (!savedSchedule) {
       // If the schedule doesn't exist, fetch it from Binus API and save it to the collection
       const payload = {
         roleActivity: [
@@ -44,9 +52,18 @@ export function createScheduleService({
 
       const { data } = await request.post(routeScheduleDate(date), payload)
 
-      const { dateStart } = data as unknown as ScheduleResponse
-      const schedule = (data as unknown as ScheduleResponse).Schedule
+      const { dateStart, Schedule } = data as unknown as ScheduleResponse
       const [_id, uniqueId, createdAt] = [new ObjectId(), nanoid(), new Date()]
+
+      const schedule = await Promise.all(
+        Schedule.map(async (session) => {
+          const response = await request.get<ClassSession>(
+            routeClassSession(session.customParam.classSessionId)
+          )
+          return { ...session, zoomUrl: response.data.joinUrl }
+        })
+      )
+
       await domain.insertOne({
         _id,
         uniqueId,
@@ -55,23 +72,29 @@ export function createScheduleService({
         createdAt,
       })
 
-      return schedule
+      return {
+        _id,
+        uniqueId,
+        dateStart,
+        schedule: Schedule,
+        createdAt,
+      } as ScheduleDomain
     }
 
-    return scheduleExists.schedule
+    return savedSchedule
   }
 
   /** Fetches today's class schedule */
   async function fetchTodaysSchedules() {
     // Get today's date yyyy-mm-dd
-    const date = new Date().toISOString().split('T')[0]
+    const date = dayjs().format('YYYY-MM-DD')
     return fetchSchedule(date)
   }
 
   /** Fetches tomorrow's class schedule */
   async function fetchTomorrowsSchedules() {
     // Get tomorrow's date yyyy-mm-dd
-    const date = new Date(+new Date() + 86400000).toISOString().split('T')[0]
+    const date = dayjs().add(1, 'day').format('YYYY-MM-DD')
     return fetchSchedule(date)
   }
 
