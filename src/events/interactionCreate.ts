@@ -1,8 +1,8 @@
-import mongodb from 'mongodb'
 import type { Client, Interaction } from 'discord.js'
-
-import { ConfigureCommandComponentID } from '../commands/configure'
+import mongodb from 'mongodb'
 import { commands } from '../register-commands'
+import { buttonInteraction } from './interactions/button'
+import { selectMenuInteraction } from './interactions/select-menu'
 
 export type InteractionCreateContext = {
   client: Client
@@ -14,18 +14,8 @@ export type InteractionCreateContext = {
 
 export default function ({ client, mongodb }: InteractionCreateContext) {
   return async (interaction: Interaction) => {
-    if (interaction.isSelectMenu()) {
-      if (
-        interaction.customId ===
-        ConfigureCommandComponentID.notificationsChannelID
-      ) {
-        // TODO: Implement notifications
-        await interaction.update({
-          content: 'Notification is still in WIP',
-          components: [],
-        })
-      }
-    }
+    if (interaction.isSelectMenu()) await selectMenuInteraction(interaction)
+    if (interaction.isButton()) await buttonInteraction(interaction)
 
     if (!interaction.isCommand()) return
     try {
