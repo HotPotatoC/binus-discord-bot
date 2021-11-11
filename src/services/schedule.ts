@@ -1,15 +1,13 @@
 import { ObjectId } from 'bson'
-import { nanoid } from 'nanoid'
 import dayjs from 'dayjs'
-
-import { routeClassSession, routeScheduleDate } from '../types'
-import request from '../infrastructure/http-client'
-
-import type { ClassSession, ServiceContext, ScheduleResponse } from '../types'
+import { nanoid } from 'nanoid'
 import type {
   ScheduleDomain,
-  ScheduleDomainContext,
+  ScheduleDomainContext
 } from '../domain/schedule-domain'
+import request from '../infrastructure/http-client'
+import type { ClassSession, ScheduleResponse, ServiceContext } from '../types'
+import { routes } from '../types'
 
 /** Creates a new schedule service handler */
 export function createScheduleService({
@@ -51,7 +49,7 @@ export function createScheduleService({
         ],
       }
 
-      const { data } = await request.post(routeScheduleDate(date), payload)
+      const { data } = await request.post(routes.ScheduleDate(date), payload)
 
       const { dateStart, Schedule } = data as unknown as ScheduleResponse
       const [_id, uniqueId, createdAt] = [new ObjectId(), nanoid(), new Date()]
@@ -59,7 +57,7 @@ export function createScheduleService({
       const schedule = await Promise.all(
         Schedule.map(async (session) => {
           const response = await request.get<ClassSession>(
-            routeClassSession(session.customParam.classSessionId)
+            routes.ClassSession(session.customParam.classSessionId)
           )
           return { ...session, zoomUrl: response.data.joinUrl }
         })

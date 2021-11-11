@@ -1,6 +1,5 @@
 import { MessageEmbed } from 'discord.js'
 import dayjs from 'dayjs'
-import type { HexColorString } from 'discord.js'
 
 import theme from '../theme'
 import createScheduleDomain from '../domain/schedule-domain'
@@ -43,7 +42,7 @@ export async function todayExecute({ interaction, mongodb }: CommandContext) {
         .setColor(theme.colors.primary)
 
       if (session.zoomUrl) {
-        embed.addField('Zoom URL:', session.zoomUrl, true)
+        embed.addField('Zoom URL:', session.zoomUrl)
       }
 
       scheduleEmbeds.push(embed)

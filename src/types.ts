@@ -80,29 +80,6 @@ export type ScheduleResponse = {
   Schedule: ScheduleAPISchema[]
 }
 
-/** Route: https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule (used as prefix) */
-export const routeSchedule = `${binus.restScheduleURL}/schedule`
-
-/** Route: (POST) https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule/Date-v1/{date} */
-export const routeScheduleDate = (date: string) =>
-  `${routeSchedule}/Date-v1/${date}`
-
-/** Route: (POST) https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule/Month-v1/{date} */
-export const routeScheduleMonth = (date: string) =>
-  `${routeSchedule}/Month-v1/${date}`
-
-/** Route: https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component (used as prefix) */
-export const routeCourses = `${binus.restCourseURL}/Course/Period/2110/Component`
-
-/** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/LEC/Student */
-export const routeCoursesLEC = `${routeCourses}/LEC/Student`
-
-/** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/TUT/Student */
-export const routeCoursesTUT = `${routeCourses}/TUT/Student`
-
-/** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/LAB/Student */
-export const routeCoursesLAB = `${routeCourses}/LAB/Student`
-
 /** Class session resource */
 export type ClassSessionResource = {
   id: string
@@ -160,10 +137,34 @@ export type ClassSession = {
   courseSubTopic: string[]
 }
 
-/** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/ClassSession/Class/{classID}/Student */
-export const routeClass = (classID: string) =>
-  `${binus.restCourseURL}/ClassSession/Class/${classID}/Student`
+export const routes = {
+  /** Route: https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule (used as prefix) */
+  Schedule: `${binus.restScheduleURL}/schedule`,
 
-/** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/ClassSession/Session/{sessionID}/Resource/Student */
-export const routeClassSession = (sessionID: string) =>
-  `${binus.restCourseURL}/ClassSession/Session/${sessionID}/Resource/Student`
+  /** Route: (POST) https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule/Date-v1/{date} */
+  ScheduleDate: (date: string) =>
+    `${binus.restScheduleURL}/schedule/Date-v1/${date}`,
+
+  /** Route: (POST) https://func-bm7-schedule-prod.azurewebsites.net/api/api/schedule/Month-v1/{date} */
+  ScheduleMonth: (date: string) =>
+    `${binus.restScheduleURL}/schedule/Month-v1/${date}`,
+
+  /** Route: https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component (used as prefix) */
+  Courses: `${binus.restCourseURL}/Course/Period/2110/Component`,
+
+  /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/LEC/Student */
+  CoursesLEC: `${binus.restCourseURL}/Course/Period/2110/Component/LEC/Student`,
+
+  /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/TUT/Student */
+  CoursesTUT: `${binus.restCourseURL}/Course/Period/2110/Component/TUT/Student`,
+
+  /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/Course/Period/2110/Component/LAB/Student */
+  CoursesLAB: `${binus.restCourseURL}/Course/Period/2110/Component/LAB/Student`,
+  /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/ClassSession/Class/{classID}/Student */
+  Class: (classID: string) =>
+    `${binus.restCourseURL}/ClassSession/Class/${classID}/Student`,
+
+  /** Route: (GET) https://apim-bm7-prod.azure-api.net/func-bm7-course-prod/ClassSession/Session/{sessionID}/Resource/Student */
+  ClassSession: (sessionID: string) =>
+    `${binus.restCourseURL}/ClassSession/Session/${sessionID}/Resource/Student`,
+}
