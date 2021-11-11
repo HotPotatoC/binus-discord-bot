@@ -1,39 +1,26 @@
+import { SlashCommandBuilder } from '@discordjs/builders'
+import type { REST } from '@discordjs/rest'
+import { Routes } from 'discord-api-types/v9'
+import { Collection } from 'discord.js'
 import fs from 'fs'
 import path from 'path'
-import { Collection } from 'discord.js'
-import { SlashCommandBuilder } from '@discordjs/builders'
-import { Routes } from 'discord-api-types/v9'
-import type { REST } from '@discordjs/rest'
-
 import { bot } from './config'
 import type { Command, CommandOption } from './types'
 
 /** Default commands directory path */
 const commandsDirPath = path.resolve(__dirname, './commands')
 
-/** Command files */
-const commandFiles = fs
-  .readdirSync(commandsDirPath)
-  .filter((file) => file.endsWith('.ts'))
+/** Get command files */
+const getCommandFiles = (): string[] =>
+  fs.readdirSync(commandsDirPath).filter((file) => file.endsWith('.ts'))
 
 /** Commands map */
 export const commands = new Collection<string, Command>()
 
-/** Get all commands in the commands directory */
-export function storeCommandsToCollection() {
-  for (const file of commandFiles) {
-    const command = require(path.resolve(commandsDirPath, file))
-      .default as Command
-    commands.set(command.name, command)
-  }
-
-  return commands.values()
-}
-
 /** Create slash commands */
 export function createSlashCommands() {
   const slashCommands: SlashCommandBuilder[] = []
-  for (const file of commandFiles) {
+  for (const file of getCommandFiles()) {
     const command = require(path.resolve(commandsDirPath, file))
       .default as Command
 
@@ -100,8 +87,6 @@ export function createSlashCommands() {
                 .setRequired(cmdOpt.required || false)
             )
             break
-          default:
-            break
         }
       })
     }
@@ -114,11 +99,17 @@ export function createSlashCommands() {
 
 /** Register commands */
 export async function registerCommands(client: REST) {
-  storeCommandsToCollection()
-  const commands = createSlashCommands()
+  // Get all commands in the commands directory and register them
+  for (const file of getCommandFiles()) {
+    const command = require(path.resolve(commandsDirPath, file))
+      .default as Command
+    commands.set(command.name, command)
+  }
+
+  const slashCommands = createSlashCommands()
   await client
     .put(Routes.applicationCommands(bot.clientID), {
-      body: commands.map((c) => c.toJSON()),
+      body: slashCommands.map((c) => c.toJSON()),
     })
     .catch(console.error)
 
