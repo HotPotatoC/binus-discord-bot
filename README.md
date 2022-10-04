@@ -13,17 +13,8 @@
 ## 📊 Requirements
 
 - Node.js >= 16.6.0
-- pm2 >= 3.0.0
 
 ## 🛠 Setup
-
-Install `pm2` globally:
-
-```bash
-npm install -g pm2
-# Or
-yarn global add pm2
-```
 
 Install the dependencies:
 
@@ -37,6 +28,7 @@ Setup the bot's configuration by creating a `.env` file in the root directory of
 
 ```text
 TOKEN=xxx
+MONGODB_URL=mongodb://127.0.0.1:27017/sunib_companion
 
 CLIENT_ID=xxx
 GUILD_ID=xxx
@@ -56,14 +48,6 @@ Once you've installed the dependencies and configured the bot, you can run the b
 npm run dev
 # Or
 yarn dev
-```
-
-To stop the bot, run the following command:
-
-```bash
-npm run stop
-# Or
-yarn stop
 ```
 
 ## 📗 Contributing
