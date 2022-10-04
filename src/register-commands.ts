@@ -1,9 +1,10 @@
-import { SlashCommandBuilder } from '@discordjs/builders'
-import type { REST } from '@discordjs/rest'
-import { Routes } from 'discord-api-types/v9'
-import { Collection } from 'discord.js'
 import fs from 'fs'
 import path from 'path'
+
+import { SlashCommandBuilder } from '@discordjs/builders'
+import type { REST } from 'discord.js'
+import { Collection, Routes } from 'discord.js'
+
 import { bot } from './config'
 import type { Command, CommandOption } from './types'
 
@@ -18,10 +19,10 @@ const getCommandFiles = (): string[] =>
 export const commands = new Collection<string, Command>()
 
 /** Create slash commands */
-export function createSlashCommands() {
+export async function createSlashCommands() {
   const slashCommands: SlashCommandBuilder[] = []
   for (const file of getCommandFiles()) {
-    const command = require(path.resolve(commandsDirPath, file))
+    const command = (await import(path.resolve(commandsDirPath, file)))
       .default as Command
 
     const slashCommand = new SlashCommandBuilder()
@@ -101,12 +102,12 @@ export function createSlashCommands() {
 export async function registerCommands(client: REST) {
   // Get all commands in the commands directory and register them
   for (const file of getCommandFiles()) {
-    const command = require(path.resolve(commandsDirPath, file))
+    const command = (await import(path.resolve(commandsDirPath, file)))
       .default as Command
     commands.set(command.name, command)
   }
 
-  const slashCommands = createSlashCommands()
+  const slashCommands = await createSlashCommands()
   await client
     .put(Routes.applicationCommands(bot.clientID), {
       body: slashCommands.map((c) => c.toJSON()),

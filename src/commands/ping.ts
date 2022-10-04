@@ -1,5 +1,5 @@
-import { MessageEmbed } from 'discord.js'
 import type { ColorResolvable, Message } from 'discord.js'
+import { EmbedBuilder } from 'discord.js'
 
 import theme from '../theme'
 import type { Command, CommandContext } from './../types'
@@ -25,7 +25,7 @@ export async function pingExecute({ interaction }: CommandContext) {
     color = theme.colors.success
   }
 
-  const embed = new MessageEmbed().setDescription(description).setColor(color)
+  const embed = new EmbedBuilder().setDescription(description).setColor(color)
 
   await interaction.editReply({ embeds: [embed] })
 }

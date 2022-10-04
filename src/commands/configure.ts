@@ -1,5 +1,5 @@
-import { MessageActionRow, MessageSelectMenu } from 'discord.js'
 import type { TextChannel } from 'discord.js'
+import { ActionRowBuilder, ChannelType, SelectMenuBuilder } from 'discord.js'
 
 import type { Command, CommandContext } from './../types'
 
@@ -8,14 +8,16 @@ export enum ConfigureCommandComponentID {
 }
 
 export async function configureExecute({ interaction }: CommandContext) {
+  if (!interaction.isChatInputCommand()) return
+
   const channels = interaction.client.channels.cache
-  const actionRow = new MessageActionRow().addComponents(
-    new MessageSelectMenu()
+  const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+    new SelectMenuBuilder()
       .setCustomId(ConfigureCommandComponentID.notificationsChannelID)
       .setPlaceholder('Nothing selected')
       .addOptions(
         ...channels
-          .filter((channel) => channel.type === 'GUILD_TEXT')
+          .filter((channel) => channel.type === ChannelType.GuildText)
           .map((channel) => ({
             value: channel.id,
             label: (channels.get(channel.id) as TextChannel).name,
@@ -25,7 +27,7 @@ export async function configureExecute({ interaction }: CommandContext) {
 
   await interaction.reply({
     content: 'Select channel to send upcoming class notifications',
-    components: [actionRow],
+    components: [row],
   })
 }
 

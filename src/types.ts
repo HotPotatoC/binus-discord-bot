@@ -1,5 +1,5 @@
-import * as mongodb from 'mongodb'
 import type { Client, CommandInteraction } from 'discord.js'
+import * as mongodb from 'mongodb'
 
 import { binus } from './config'
 

@@ -1,9 +1,9 @@
 import { ObjectId } from 'bson'
 import dayjs from 'dayjs'
-import { nanoid } from 'nanoid'
+import { v4 as uuidv4 } from 'uuid'
 import type {
   ScheduleDomain,
-  ScheduleDomainContext
+  ScheduleDomainContext,
 } from '../domain/schedule-domain'
 import request from '../infrastructure/http-client'
 import type { ClassSession, ScheduleResponse, ServiceContext } from '../types'
@@ -52,7 +52,7 @@ export function createScheduleService({
       const { data } = await request.post(routes.ScheduleDate(date), payload)
 
       const { dateStart, Schedule } = data as unknown as ScheduleResponse
-      const [_id, uniqueId, createdAt] = [new ObjectId(), nanoid(), new Date()]
+      const [_id, uniqueId, createdAt] = [new ObjectId(), uuidv4(), new Date()]
 
       const schedule = await Promise.all(
         Schedule.map(async (session) => {

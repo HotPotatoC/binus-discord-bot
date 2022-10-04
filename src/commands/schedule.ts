@@ -1,9 +1,11 @@
-import { MessageEmbed } from 'discord.js'
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-import theme from '../theme'
+import { EmbedBuilder } from 'discord.js'
+
 import createScheduleDomain from '../domain/schedule-domain'
 import createScheduleService from '../services/schedule'
+import theme from '../theme'
 import type { Command, CommandContext, CommandOption } from '../types'
 
 const scheduleCommandOptions: CommandOption[] = [
@@ -41,9 +43,9 @@ export async function scheduleExecute({
       domain: scheduleDomain,
     })
 
-    const year = interaction.options.getString('year')
-    const month = interaction.options.getString('month')
-    const day = interaction.options.getString('day')
+    const year = interaction.options.get('year')
+    const month = interaction.options.get('month')
+    const day = interaction.options.get('day')
     const date = `${year}-${month}-${day}`
 
     const schedule = await scheduleService.fetchSchedule(date)
@@ -56,31 +58,35 @@ export async function scheduleExecute({
       return
     }
 
-    const scheduleEmbeds: MessageEmbed[] = []
+    const scheduleEmbeds: EmbedBuilder[] = []
 
     for (const session of schedule.schedule.values()) {
+      dayjs.extend(relativeTime)
+      const whenStartsAt = dayjs(session.dateStart).fromNow()
       const startsAt = dayjs(session.dateStart).format('YYYY-MM-DD HH:mm')
       const endsAt = dayjs(session.dateEnd).format('YYYY-MM-DD HH:mm')
 
-      const embed = new MessageEmbed()
+      const embed = new EmbedBuilder()
         .setTitle(`${session.content} [${session.title}]`)
         .setDescription(
           `Session ${session.customParam.sessionNumber} ${session.content} ${session.title}`
         )
-        .addField('Starts at:', startsAt)
-        .addField('Ends at:', endsAt)
-        .addField(
-          'Session:',
-          session.customParam.sessionNumber.toString(),
-          true
+        .addFields(
+          { name: 'Starts at:', value: `${whenStartsAt} - ${startsAt}` },
+          { name: 'Ends at:', value: endsAt },
+          {
+            name: 'Session:',
+            value: session.customParam.sessionNumber.toString(),
+            inline: true,
+          },
+          { name: 'Delivery Mode:', value: session.deliveryMode, inline: true }
         )
-        .addField('Delivery Mode:', session.deliveryMode, true)
-        .setURL(session.zoomUrl || '')
-        .setFooter(`ID: ${schedule.uniqueId}`)
+        .setFooter({ text: `ID: ${schedule.uniqueId}` })
         .setColor(theme.colors.primary)
 
       if (session.zoomUrl) {
-        embed.addField('Zoom URL:', session.zoomUrl)
+        embed.setURL(session.zoomUrl)
+        embed.addFields({ name: 'Zoom URL:', value: session.zoomUrl })
       }
 
       scheduleEmbeds.push(embed)

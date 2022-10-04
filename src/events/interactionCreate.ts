@@ -1,8 +1,6 @@
 import type { Client, Interaction } from 'discord.js'
 import mongodb from 'mongodb'
 import { commands } from '../register-commands'
-import { buttonInteraction } from './interactions/button'
-import { selectMenuInteraction } from './interactions/select-menu'
 
 export type InteractionCreateContext = {
   client: Client
@@ -14,9 +12,6 @@ export type InteractionCreateContext = {
 
 export default function ({ client, mongodb }: InteractionCreateContext) {
   return async (interaction: Interaction) => {
-    if (interaction.isSelectMenu()) await selectMenuInteraction(interaction)
-    if (interaction.isButton()) await buttonInteraction(interaction)
-
     if (!interaction.isCommand()) return
     try {
       const command = commands.get(interaction.commandName)

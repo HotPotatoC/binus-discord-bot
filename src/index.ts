@@ -1,5 +1,4 @@
-import { Client, Intents } from 'discord.js'
-import { REST } from '@discordjs/rest'
+import { Client, GatewayIntentBits, REST } from 'discord.js'
 
 import { bot } from './config'
 import database from './infrastructure/database'
@@ -9,15 +8,15 @@ import events from './events'
 
 /** Entry-point */
 async function main() {
+  console.log('Starting...')
+
   const [mongoDatabase, mongoClient] = await database.connect(
     process.env.MONGODB_URL as string
   )
 
-  const client = new Client({
-    intents: [Intents.FLAGS.GUILDS],
-  })
+  const client = new Client({ intents: [GatewayIntentBits.Guilds] })
 
-  const rest = new REST({ version: '9' }).setToken(bot.token)
+  const rest = new REST({ version: '10' }).setToken(bot.token)
 
   await registerCommands(rest)
 
