@@ -27,6 +27,7 @@ export default function ({ client, mongodb }: InteractionCreateContext) {
         mongodb,
       })
     } catch (error) {
+      console.error(error)
       await interaction.reply({
         content: 'There was an error while executing this command!',
         ephemeral: true,

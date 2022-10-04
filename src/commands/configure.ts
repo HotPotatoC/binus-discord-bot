@@ -8,9 +8,10 @@ export enum ConfigureCommandComponentID {
 }
 
 export async function configureExecute({ interaction }: CommandContext) {
-  if (!interaction.isChatInputCommand()) return
-
-  const channels = interaction.client.channels.cache
+  const guild = interaction.client.guilds.cache.get(
+    interaction.guildId as string
+  )
+  const channels = guild?.channels.cache!
   const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(
     new SelectMenuBuilder()
       .setCustomId(ConfigureCommandComponentID.notificationsChannelID)
@@ -19,9 +20,10 @@ export async function configureExecute({ interaction }: CommandContext) {
         ...channels
           .filter((channel) => channel.type === ChannelType.GuildText)
           .map((channel) => ({
-            value: channel.id,
             label: (channels.get(channel.id) as TextChannel).name,
+            value: channel.id,
           }))
+          .slice(0, 25)
       )
   )
 
